@@ -44,7 +44,7 @@ def create_app(test_config=None):
         
         return jsonify({
             "success": True,
-            "catergories": {catig.id: catig.type for catig in categories}
+            "categories": {catig.id: catig.type for catig in categories}
         })
 
 
@@ -60,7 +60,7 @@ def create_app(test_config=None):
             "success": True,
             "questions": asked_questions,
             "total_questions": len(Question.query.all()),
-            "categories": [catig.type for catig in Category.query.all()]
+            "categories": {catig.id: catig.type for catig in Category.query.all()}
         })
 
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
