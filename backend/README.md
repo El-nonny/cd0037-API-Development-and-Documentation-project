@@ -73,7 +73,7 @@ You will need to provide detailed documentation of your API endpoints including 
 
 ### Documentation Example
 
-`GET '/api/v1.0/categories'`
+`GET '/categories'`
 
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
@@ -89,6 +89,112 @@ You will need to provide detailed documentation of your API endpoints including 
   "6": "Sports"
 }
 ```
+`GET "/questions'`
+
+- Feches dictionaries of 10 questions in a page in which the keys are the variables (answer, category, difficulty, id and question) and the values are the corresponding data
+- Request Arguments: Page - integer
+- Returns: An object with a key `categories` with a value of list of the categories, a key `question` that contains 10 dictionaries with each dictionary keys having `answer`, `category`, `difficulty`, `id` and `question` with their value pairs, the total questons and dictionary of categories.
+
+```
+"categories": [
+    "Science",
+    "Art",
+    "Geography",
+    "History",
+    "Entertainment",
+    "Sports"
+  ],
+  "questions": [
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    },
+  ],
+  "success": true,
+  "total_questions": 18
+}
+```
+
+`DELETE '/categories/&{id}'`
+
+- Deletes the question in the requested category id
+- Request Argument: id - integer
+- Returns: Returns the deleted question's id, an updated page of questions, success and total questions remaining
+
+```
+"deleted": 5,
+  "questions": [
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    },
+ ],
+  "success": true,
+  "total_questions": 18
+}
+```
+
+`POST '/questions'`
+
+- Creates and registers a new question
+- Request body: 
+```
+      {
+          'question':  'The new question',
+          'answer':  'Answer to the new question',
+          'difficulty': 2,
+          'category': 5,
+      }
+```
+- Returns: Returns the new question's id, an updated page of questions, success and total questions
+
+`POST '/search'`
+
+- Sends a post request to search for a specific question by search term
+- Request body: 
+```
+    {
+      'searchTerm': 'the word to be searched'
+    }
+```
+- Returns: the corresponding question and the total number of questions questions corresponding with the search term.
+
+`GET '/categories/&{id}/questions'`
+
+- Fetches all questions that are in the requested category id
+- Request Argument: id - integer
+- Returns: Returns an object with questions in the requested category id, success, total question and current category 
+
+```
+current_category": {
+    "id": 3,
+    "type": "Geography"
+  },
+  "questions": [
+    {
+      "answer": "Lake Victoria",
+      "category": 3,
+      "difficulty": 2,
+      "id": 13,
+      "question": "What is the largest lake in Africa?"
+    }
+ ],
+  "success": true,
+  "total_questions": 3
+}
+```
+
+`POST '/quiz'`
+
+- Randomly generates quizzes for the game
+- Returns: A random question
+
 
 ## Testing
 
