@@ -18,6 +18,7 @@ def paginate_question(request, selection):
 
     return asked_questions
 
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -33,6 +34,7 @@ def create_app(test_config=None):
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
         )
         return response
+
     
     @app.route('/categories')
     def get_categories():
@@ -63,6 +65,7 @@ def create_app(test_config=None):
             "categories": {catig.id: catig.type for catig in Category.query.all()}
         })
 
+
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
         try:
@@ -84,6 +87,7 @@ def create_app(test_config=None):
 
         except Exception:
             abort(422)
+
 
     @app.route("/questions", methods=["POST"])
     def create_book():
@@ -110,7 +114,7 @@ def create_app(test_config=None):
                 }
             )
 
-        except:
+        except Exception:
             abort(422)
 
 
@@ -130,6 +134,7 @@ def create_app(test_config=None):
             "total_questions": len(selection),
         })
 
+
     @app.route('/categories/<int:category_id>/questions', methods=['GET'])
     def get_questions_by_category(category_id):
         category = Category.query.filter(Category.id == category_id).first()
@@ -146,34 +151,43 @@ def create_app(test_config=None):
             'current_category': category.format()
         })
 
+
     @app.route('/quiz', methods=['POST'])
     def get_quizzes():
-        # This endpoint should take category and previous question parameters
         try:
             body = request.get_json()
             quiz_categ = body.get('quiz_category', None)
-            prev_questions = body.get('previous_questions', None)
+            prev_question = body.get('previous_questions', None)
             category_id = quiz_categ['id']
+            questions = None
 
             if category_id == 0:
-                questions = Question.query.filter(Question.id.notin_(prev_questions)).all()
+                questions = Question.query.all()
             else:
-                questions = Question.query.filter(Question.id.notin_(prev_questions),
-                Question.category == category_id).all()
-            question = None
+                questions = Question.query.filter(Question.category == category_id).all()
 
-            if(questions):
-                question = random.choice(questions)
+            formatted_question = [q.format() for q in questions]
+            curr_question = [q.get('id') for q in formatted_question]
 
-            return jsonify({
-                'success': True,
-                'question': question.format()
-            })
+            question_ids = list(set(curr_question).difference(prev_question))
+
+            if len(question_ids) == 0:
+                return jsonify({
+                  'success': True,
+                  'question': None
+                })
+            else:
+                random_id = random.choice(question_ids)
+                question = Question.query.get(random_id)
+
+                return jsonify({
+                  'success': True,
+                  'question': question.format()
+                })
 
         except Exception:
-            abort(404)
+            abort(422)
 
-            
 
     @app.errorhandler(404)
     def not_found(error):
